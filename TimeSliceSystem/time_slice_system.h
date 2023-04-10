@@ -27,8 +27,11 @@ time_slice_system* create_time_slice_system()
 }
 
 // register task into time slice system by a sorted insert
+// specification: multiple tasks with same cyle time are not allowed!
 void register_task(time_slice_system* system, task_node* task)
 {
+	// 1, 5, 10, 20, 100
+	// 1, 5, 10, 20, 50<100
 	// find last task that fulfills sorting condition
 	task_node* t = system->task_list;
 	while (t->next != NULL) {

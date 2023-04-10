@@ -43,12 +43,13 @@ void add_func_to_task(task_node* task, func_ptr func)
 // print task and the list of its function pointers
 void print_task(task_node* task)
 {
-	printf("%zdms task: ", task->cycle_time);
+	printf("%zds task: ", task->cycle_time);
 	func_node* pivot = task->func_list->next;
 	int i = 1;
 	while (pivot != NULL)
 	{
-		printf("%d->%d ", i, pivot);
+		// print rank in the list and pointer address of the function
+		printf("%d->%d ", i, pivot->func);
 		pivot = pivot->next;
 		i++;
 	}

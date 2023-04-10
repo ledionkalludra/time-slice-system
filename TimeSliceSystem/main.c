@@ -12,7 +12,7 @@ time_slice_system* s = NULL;
 void header();
 void init();
 void run();
-void step(size_t);
+void step(time_t);
 void footer();
 
 // start of the program
@@ -41,7 +41,7 @@ void init()
     printf("#1: Init\n");
 
     // register signal handler
-    set_ctr_handler();
+    set_ctrl_handler();
 
     // create tasks with their appropriate cycle times
     task_node* t_1 = create_task(1);
@@ -50,6 +50,12 @@ void init()
     task_node* t_100 = create_task(100);
     
     // add functions to the tasks
+    // specification: 
+    // - it is allowed to have the same function added multiple times to a task
+    // - a function has to be of type func_ptr which is void and no parameters
+    // - in the same order the functions were added, they will also be executed
+    // - order of adding tasks is independend because tasks will be executed sorted (ascending) by cycle time
+    add_func_to_task(t_1, &f_a);
     add_func_to_task(t_1, &f_a);
     add_func_to_task(t_1, &f_b);
     add_func_to_task(t_1, &f_c);
@@ -79,18 +85,18 @@ void init()
 // run loop and trigger a step every 1s
 void run()
 {
-    clock_t start_clock;
-    size_t elapsed_time;
-    size_t last_time = 0;
+    time_t start_time, end_time;
+    time_t elapsed_time;
+    time_t last_time = 0;
 
     printf("#2: Run\n");
-    start_clock = clock();
+    time(&start_time);
     
     while (g_running)
     {
         // calculate elapsed time as delta of current time and start time
-        // integer division guarantees only changes of full seconds
-        elapsed_time = ((size_t)clock() - start_clock) / CLOCKS_PER_SEC;
+        time(&end_time);
+        elapsed_time = end_time - start_time;
 
         // a second has passed if elapsed time has changed
         // if step function takes longer than 1s, step will be triggered with delay
@@ -105,7 +111,8 @@ void run()
     }
 }
 
-void step(size_t t) 
+// every whole second a step will be executed
+void step(time_t t) 
 {
     task_node* task;
     func_node* func;
