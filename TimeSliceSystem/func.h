@@ -17,13 +17,13 @@ struct func_node
 };
 
 // create func list
-func_node* create_func()
+func_node* create_func(func_ptr func)
 {
 	// create func node as head of the list
 	func_node* head = (func_node*)malloc(sizeof(func_node));
 	if (head == NULL)
 		return NULL;
-	head->func = NULL;
+	head->func = func;
 	head->next = NULL;
 	return head;
 }
@@ -36,10 +36,9 @@ func_node* append_func(func_node* head, func_ptr func)
 		return NULL;
 
 	// create new func node
-	func_node* node = (func_node*)malloc(sizeof(func_node));
-	if (node == NULL)
+	func_node* node = create_func(func);
+	if (node == NULL) 
 		return NULL;
-	node->func = func;
 
 	// find last node
 	func_node* pivot = head;

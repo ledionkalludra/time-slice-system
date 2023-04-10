@@ -11,6 +11,7 @@ typedef struct time_slice_system time_slice_system;
 
 struct time_slice_system 
 {
+	size_t task_count;
 	task_node* task_list;
 };
 
@@ -22,6 +23,7 @@ time_slice_system* create_time_slice_system()
 	if (!system)
 		return NULL;
 	// create head for task list
+	system->task_count = 0;
 	system->task_list = create_task(0);
 	return system;
 }
@@ -30,8 +32,9 @@ time_slice_system* create_time_slice_system()
 // specification: multiple tasks with same cyle time are not allowed!
 void register_task(time_slice_system* system, task_node* task)
 {
-	// 1, 5, 10, 20, 100
-	// 1, 5, 10, 20, 50<100
+	if (system == NULL && task == NULL)
+		return;
+		
 	// find last task that fulfills sorting condition
 	task_node* t = system->task_list;
 	while (t->next != NULL) {
@@ -50,6 +53,7 @@ void register_task(time_slice_system* system, task_node* task)
 	// add new task after found task
 	task->next = t->next;
 	t->next = task;
+	system->task_count++;
 }
 
 // print registered tasks of time slice system

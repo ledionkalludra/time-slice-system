@@ -399,3 +399,4 @@ FodyWeavers.xsd
 
 # Ignore build main
 TimeSliceSystem/main
+TimeSliceSystem/test
